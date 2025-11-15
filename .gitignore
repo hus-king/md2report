@@ -1,4 +1,2 @@
 site/
 backend/data/redis/dump.rdb
-
-/backend/tmp/**
