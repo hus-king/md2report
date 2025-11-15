@@ -1,155 +1,50 @@
-# md2report
+# 项目使用说明
 
-一个用于将Markdown文件转换为可以直接提交给学校的实验报告/大作业报告/期末小论文的工具。
+## 一、后端服务启动
 
-如果你的院系/课程要求必须提交docx格式的报告，并且：
-  - 你认为word/docx实在是太蠢了，并且习惯于使用markdown编辑文档，md2report能够大幅缩短你在报告格式、docx样式以及排版上花费的时间；
-  - 你没有试过使用markdown，不妨尝试一下: [Markdown Guides](https://www.markdownguide.org/), [Mardown 教程](https://markdown.com.cn/)；
+1. 进入 `backend` 目录：
+   ```bash
+   cd backend
+   ```
 
-如果你的院系/课程允许提交pdf格式的报告，寻找一个好用的tex模板或许是一个更好的方案。但是考虑到学习成本以及使用难度，md2report仍然可以作为一个替代选项。
+2. 使用 Docker Compose 启动服务（后台运行）：
+   ```bash
+   docker compose up -d
+   ```
 
-[预览更多](https://woolen-sheep.github.io/md2report/preview/)
+3. 服务启动成功后，可通过以下地址访问后端 API：
+   ```
+   http://localhost:8004
+   ```
 
-![Preview](docs/img/front_page.png)
+> ✅ 提示：首次运行时，Docker 会自动拉取镜像并构建容器，请确保本地已安装 `docker` 与 `docker compose`。
 
-## Quick Start
+---
 
-虽然md2report使用的都是标准markdown语法，但是markdown标记到docx的样式映射可能与你的习惯不同。
-因此，请确保除了本小节内容以外，开始使用md2report之前先阅读文档中关于[语法](https://woolen-sheep.github.io/md2report/grammar/)的部分。
+## 二、前端服务启动
 
-### Web UI
+1. 进入 `frontend` 目录：
+   ```bash
+   cd frontend
+   ```
 
-md2report提供了[Web UI](https://md2report.hust.online), 无需安装即可使用。
+2. 安装依赖并启动开发服务器：
+   ```bash
+   npm install
+   npm start
+   ```
 
-WebUI仅为不会使用python的用户提供便利，不能保证可用性，也不保证是最新版本。大体积文件建议使用CLI。
+3. 前端应用将在以下地址运行（自动打开浏览器）：
+   ```
+   http://localhost:3000
+   ```
 
-请不要上传zip bomb，如果服务受到攻击可能考虑关闭服务。
+> ⚠️ 注意：确保后端服务已启动并正常响应，否则前端调用 API 可能失败。
 
-### CLI
+---
 
-md2report提供了CLI，如果想使用CLI，需要：
+## 三、功能使用流程
 
-- python 3.10+
-- poetry in PATH
-- pandoc(version >= 2.11) in PATH
-- [cxx2flow](https://github.com/Enter-tainer/cxx2flow)
-  - 可选，仅在使用cxx2flow功能时需要
-
-```bash 
-git clone https://github.com/woolen-sheep/md2report.git 
-cd backend
-poetry install
-poetry shell
-
-python md2report.py -h
-# usage: md2report.py [-h] [-c CONFIG] [--highlight HIGHLIGHT] [-o OUTPUT] -i INPUT [-t TEMPLATE]
-#
-# options:
-#   -h, --help            show this help message and exit
-#   -c CONFIG, --config CONFIG
-#                         config file path
-#   --highlight HIGHLIGHT
-#                         enable highlight of code blocks
-#   -o OUTPUT, --output OUTPUT
-#                         output docx filename
-#   -i INPUT, --input INPUT
-#                         input markdown filename
-#   -t TEMPLATE, --template TEMPLATE
-#                         template to use
-#   --indent-font-size INDENT_FONT_SIZE
-#                         first line indent font size in pt
-#   --indent-font-num INDENT_FONT_NUM
-#                         first line indent num
-#   --first_line_indent FIRST_LINE_INDENT
-                        enable the first line indent
-
-python md2report.py -i test/test_case/5.2数据结构实验报告.md
-
-# see output.docx
-
-```
-
-### Docker
-
-```bash
-docker run --name md2report -d woolensheep/md2report:latest
-```
-
-此docker为 `backend/Dockerfile` build 产物，无法作为完整的前后端使用。但是你可以进入其中运行CLI而无需搭建环境：
-
-```bash
-➜  no-more-docx-report git:(master) ✗ docker exec -it md2report bash
-root@f35bd61ef8bc:/app# python md2report.py -h
-usage: md2report.py [-h] [-c CONFIG] [--highlight HIGHLIGHT] [-o OUTPUT] -i INPUT [-t TEMPLATE]
-
-options:
-  -h, --help            show this help message and exit
-  -c CONFIG, --config CONFIG
-                        config file path
-  --highlight HIGHLIGHT
-                        enable highlight of code blocks
-  -o OUTPUT, --output OUTPUT
-                        output docx filename
-  -i INPUT, --input INPUT
-                        input markdown filename
-  -t TEMPLATE, --template TEMPLATE
-                        template to use
-  --first_line_indent FIRST_LINE_INDENT
-                        enable the first line indent
-```
-
-### Self-Hosted Web UI
-
-md2docx的Web UI也是开源的，你可以使用docker-compose部署。
-需要注意的是现在的`docker-compose.yaml`中挂载了绝对路径，使用之前请先修改。
-
-```bash
-cd backend
-docker compose up --build -d
-docker compose ps
-```
-
-## Features
-
-目前支持的特性如下：
-
-- [x] Title and SubTitle
-- [x] Abstract
-- [x] Heading (H1 to H4)
-- [x] Image Caption
-- [x] Table
-- [x] Table Caption
-- [x] Code Highlight
-- [x] Table of Content
-- [x] Header and Footer
-- [x] First line indent
-- [x] Page Numbering
-  - [ ] Skip numbering of TOC and Abstract
-- [x] Template of Specific School
-  - [x] HUST
-    - [x] School Logo
-    - [x] Student Infomation
-
-由于依赖了pandoc，除了以上内容，pandoc原生支持的markdown语法也应该正常工作。
-
-## Compatibility
-
-目前仅在MS Office 2019上进行过测试，测试版本为`Microsoft® Word 2019MSO (版本 2210 Build 16.0.15726.20070) 64 位`，能够正常打开生成的文档。
-打开文档时若提示`是否更新文档中的这些域？`，请选择`是`。另存文件可以消除该提示。
-
-- 使用LibreOffice的用户打开生成的文档后，需要手动更新目录。
-- 若使用其它Word编辑器的用户打开后发现目录为空，也可尝试手动更新目录。
-
-## Contribute
-
-欢迎PR，欢迎feature request。
-
-在open issue之前请先阅读[提问的智慧](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/main/README-zh_CN.md)。
-
-在报告bug时应提供：
-
-- bug现象
-- Office版本
-- 可供复现的输入文件
-
-我不确定是否只有我所在的学校存在报告过多的现象，或者这是一个普遍的现象。如果你有同样的困扰，可以开PR来补充你们学校的template。贡献方式详见 [帮助开发](https://woolen-sheep.github.io/md2report/contribute/)
+1. 打开前端页面（`http://localhost:3000`）；
+2. 点击 **上传 Markdown 文件** 按钮，选择本地 `.md` 文件；
+3. 点击 **生成报告** 按钮；
